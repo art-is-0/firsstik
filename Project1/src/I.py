@@ -16,9 +16,9 @@ FIGURES_PATH = os.path.join(filepath, '../figures')
 k = 5
 n = 100
 degree = 26
-n_lambdas = 30
+n_lambdas = 50
 degrees = np.linspace(1, degree, degree)
-lambdas = np.logspace(-10, -6, n_lambdas)
+lambdas = np.logspace(-10, 5, n_lambdas)
 
 x, y = create_dataset(n=n, rescale=False, split=False)
 x = x.reshape(-1, 1)
@@ -34,7 +34,7 @@ cv_mse_OLS = k_fold_degrees(x, y, k, LinearRegression(), degree)
 
 for idx, lam in enumerate(lambdas):
     cv_mse_ridge[:, idx] = k_fold_degrees(x, y, k, Ridge(alpha=lam), degree)
-    cv_mse_lasso[:, idx] = k_fold_degrees(x, y, k, Lasso(alpha=lam, max_iter=10_000, tol=1e-3), degree)
+    cv_mse_lasso[:, idx] = k_fold_degrees(x, y, k, Lasso(alpha=lam, max_iter=10_0000, tol=1e-5), degree)
 
 
 i_r, j_r = np.unravel_index(np.argmin(cv_mse_ridge), cv_mse_ridge.shape)
