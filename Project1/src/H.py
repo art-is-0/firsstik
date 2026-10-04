@@ -52,13 +52,15 @@ RUNS = (
         (dict(batch_size=n, gamma=1e-3), r"full batch, $\gamma=10^{-3}$"),
         (dict(batch_size=15, gamma=1e-3), r"$M=15$, $\gamma=10^{-3}$ constant"),
         (dict(batch_size=5, gamma=1e-3), r"$M=5$, $\gamma=10^{-3}$ constant"),
-        (dict(batch_size=5, schedule=(1.0, 1e4)), r"$M=5$, $\gamma_t=1/(t+10^{-4})$")
+        (dict(batch_size=5, gamma=1e-3, method="adam"), r"Adam, $M=5$, $\gamma=10^{-3}$ constant"),
+        (dict(batch_size=5, schedule=(1.0, 1e4)), r"$M=5$, $\gamma_t=1/(t+10^{-4})$"),
 )
+
 
 fig, ax = plt.subplots(figsize=(10, 6))
 for kwargs, lab in RUNS:
     hist = sgd(X_train, y_train, n_epochs=n_epochs, **kwargs)
-    ax.semilogy(evals, MSE_score(hist @ X_test.T, y_test), lw=1.6, label=lab)
+    ax.plot(evals, MSE_score(hist @ X_test.T, y_test), lw=1.6, label=lab)
 ax.set_xlabel("iterations")
 ax.set_ylabel(r"SGD MSE")
 ax.legend(loc="upper right")

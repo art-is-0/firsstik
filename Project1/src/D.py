@@ -7,10 +7,8 @@ from utils import create_dataset, k_fold_degrees
 filepath = os.path.dirname(os.path.abspath(__file__))
 FIGURES_PATH = os.path.join(filepath, '../figures')
 
-from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn.linear_model import LinearRegression, Ridge
-from sklearn.pipeline import make_pipeline
-from sklearn.model_selection import KFold, cross_val_score
+from sklearn.model_selection import KFold
 
 k = 5
 n = 100
@@ -25,9 +23,9 @@ fig, ax = plt.subplots(figsize=(10, 6))
 for k in (5, 10):
     cv_mse = k_fold_degrees(x, y, k, LinearRegression(fit_intercept=False))
     best_deg = np.argmin(cv_mse)
-    print(f"{k}-fold CV selects degree {best_deg} (CV-MSE {cv_mse[best_deg]:.4f})")
-    ax.plot(range(degree), cv_mse, "o-", label=f"{k}-fold CV MSE")
-    ax.scatter(best_deg, cv_mse[best_deg], s=200, color='black', marker='*',label="CV minimum")
+    print(f"{k}-fold CV selects degree {best_deg+1} (CV-MSE {cv_mse[best_deg]:.4f})")
+    ax.plot(range(1, degree + 1), cv_mse, "o-", label=f"{k}-fold CV MSE")
+    ax.scatter(best_deg+1, cv_mse[best_deg], s=200, color='black', marker='*',label="CV minimum")
 ax.set_yscale("log")
 ax.set_xlabel("polynomial degree")
 ax.set_ylabel("cross-validated MSE")

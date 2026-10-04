@@ -171,6 +171,7 @@ def gradient_descent(X, y, gamma, lam=0.0, num_iters=1000, tol=1e-8):
     return np.array(history), t + 1, err
 
 def k_fold_degrees(x, y, k, model, maxdegree=26):
+    """K-fold degrees"""
     cv_mse = np.zeros(maxdegree)
     kfold = KFold(n_splits=k, shuffle=True, random_state=67)
     for deg in range(1, maxdegree + 1):
