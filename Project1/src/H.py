@@ -37,7 +37,7 @@ gamma = 1e-2
 num_iters = int(1e4)
 stride = 1
 
-n_epochs = 100
+n_epochs = 1000
 n = 100
 
 x_train, x_test, y_train, y_test = create_dataset(n=n)
@@ -60,7 +60,7 @@ RUNS = (
 fig, ax = plt.subplots(figsize=(10, 6))
 for kwargs, lab in RUNS:
     hist = sgd(X_train, y_train, n_epochs=n_epochs, **kwargs)
-    ax.plot(evals, MSE_score(hist @ X_test.T, y_test), lw=1.6, label=lab)
+    ax.semilogx(evals, MSE_score(hist @ X_test.T, y_test), lw=1.6, label=lab)
 ax.set_xlabel("iterations")
 ax.set_ylabel(r"SGD MSE")
 ax.legend(loc="upper right")
