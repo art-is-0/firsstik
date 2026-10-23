@@ -59,7 +59,7 @@ def train(net, X, Y, method="adam", gamma=1e-3, epochs=100, batch_size=None,
             grads = net.compute_gradient(X[batch], Y[batch])
             new_layers, states = update_layers(net.layers, grads, method, gamma, states, t, **kw)
             net.update_weights(new_layers)
-        history["train_cost".append(net.cost(X, Y))]
+        history["train_cost"].append(net.cost(X, Y))
         if X_val is not None:
             history["val_cost"].append(net.cost(X_val, Y_val))
     return history

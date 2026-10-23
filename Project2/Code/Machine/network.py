@@ -38,8 +38,8 @@ class NeuralNetwork:
         '''data term + penalties'''
         l1 = l1_penalty(self.layers, self.lmbd1)
         l2 = l2_penalty(self.layers, self.lmbd2)
-        p = self.predict(inputs, targets)
-        return self.cost_fun(p) + l2 + l1
+        p = self.predict(inputs)
+        return self.cost_fun(p, targets) + l2 + l1
     
     
     def _feed_forward_saver(self, inputs):

@@ -65,7 +65,7 @@ def l2_penalty_der(W, lmbd2):
 
 
 def l1_penalty(layers, lmbd1):
-    return lmbd1 * sum(p.sum(np.abs(W)) for W, _ in layers)
+    return lmbd1 * sum(np.sum(np.abs(W)) for W, _ in layers)
 
 
 def l1_penalty_der(W, lmbd1):

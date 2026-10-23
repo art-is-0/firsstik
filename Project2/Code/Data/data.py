@@ -10,9 +10,10 @@ def load_mnist(path):
     return x_train, y_train, x_test, y_test
 
 
-def train_val_split(X, y, val_size=0.1, seed=67):
+def train_val_split(X, y, val_size=0.1, seed=67, stratify=True):
     '''Returns X_train, X_val, y_train, y_val (sklearn's order)'''
-    return train_test_split(X, y, test_size=val_size, random_state=seed, stratify=y)
+    return train_test_split(X, y, test_size=val_size, random_state=seed, 
+                            stratify=y if stratify else None)
 
 
 def one_hot(y, n_classes=10):
