@@ -1,39 +1,42 @@
 import numpy as np
 
 def sigmoid(z):
-    return ...
+    e = np.exp(-np.abs(z))
+    return np.where(z >= 0, 1.0 / (1.0 + e), e / (1.0 + e))
 
 
 def sigmoid_der(z):
-    return ...
+    s = sigmoid(z)
+    return s * (1.0 - s)
 
 
 def relu(z):
-    return ...
+    return np.maximum(0.0, z)
 
 
 def relu_der(z):
-    return ...
+    return (z > 0).astype(float)
 
 
 def leaky_relu(z, alpha=0.01):
-    return ...
+    return np.where(z > 0, z, alpha * z)
 
 
 def leaky_relu_der(z, alpha=0.01):
-    return ...
+    return np.where(z > 0, 1.0, alpha)
 
 
 def identity(z):
-    return ...
+    return z
 
 
 def identity_der(z):
-    return ...
+    return np.ones_like(z)
 
 
 def softmax(z):
-    return ...
+    e = np.exp(z - np.max(z, axis=1, keepdims=True))
+    return e / np.sum(e, axis=1, keepdims=True)
 
 
 # name -> (f, f'); softmax has no elementwise derivative, so None
