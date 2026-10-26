@@ -47,7 +47,8 @@ def create_dataset(n=100, sigma=0.1, seed=67, rescale=True, split=True):
 
     return x, y
 
-def create_feature_matrix(*args, degree=2):
+
+def create_feature_matrix(*args, degree=2, bias=True):
     """
     Creates Vandermonde matrix for multiple sets of arrays
 
@@ -63,9 +64,10 @@ def create_feature_matrix(*args, degree=2):
     X : arraylikes 
         Arrays of size (n x d)
     """
+    start = 0 if bias else 1
     out_list = []
     for arg in args:
-        out = np.column_stack([arg**k for k in range(1, degree + 1)])
+        out = np.column_stack([arg**k for k in range(start, degree + 1)])
         out_list.append(out)
 
     if len(out_list) != 1:
@@ -73,36 +75,44 @@ def create_feature_matrix(*args, degree=2):
     
     return out_list[0]
 
+
 def closed_form(X, y, lam=0.0):
     """(X^T X + n lambda I)^-1 X^T y, the 1/n convention of Eq. (3.95)."""
     n, p = X.shape
     return np.linalg.solve(X.T @ X + n * lam * np.eye(p), X.T @ y)
 
+
 def cost(theta, X, y, lam=0.0):
     """Eqs. (4.12) and (4.16)."""
     return np.sum((X @ theta - y) ** 2) / len(y) + lam * theta @ theta
+
 
 def cost_OLS(theta, X, y):
     """OLS cost function for JAX"""
     return jnp.sum((X @ theta - y)**2) / len(y)
 
+
 def cost_Ridge(theta, X, y, lam):
     """Ridge cost function for JAX"""
     return jnp.sum((X @ theta - y)**2) / len(y) + lam * jnp.sum(theta**2)
 
+
 def cost_Lasso(theta, X, y, lam):
     """Lasso cost function for JAX"""
     return jnp.sum((X @ theta - y)**2) / len(y) + lam * jnp.sum(jnp.abs(theta))
+
 
 def gradient(theta, X, y, lam=0.0):
     """Gradient of Ridge, and OLS for lam=0"""
     n = len(y)
     return (2.0 / n) * X.T @ (X @ theta - y) + 2.0 * lam * theta
 
+
 def hessian_eigs(X, lam=0.0):
     """Hessian eigenvalues for the feature matrix"""
     n = len(X)
     return np.linalg.eigvalsh((2.0 / n) * X.T @ X + 2.0 * lam * np.eye(X.shape[1]))
+
 
 def MSE_score(y, y_pred):
     """MSE_score between true and predictions"""
@@ -111,11 +121,13 @@ def MSE_score(y, y_pred):
 
     return np.sum((y - y_pred)**2) / len(y)
 
+
 def r2_score(y, y_pred):
     """R2 score between true and predictions"""
     upper = np.sum((y - y_pred)**2)
     lower = np.sum((y - y.mean())**2)
     return 1 - upper / lower
+
 
 def optimiser_step(method, theta, g, state, t, gamma, beta=0.9, rho=0.99,
                    beta1=0.9, beta2=0.999, eps=1e-8):
@@ -143,6 +155,7 @@ def optimiser_step(method, theta, g, state, t, gamma, beta=0.9, rho=0.99,
         return theta - gamma * m_hat / (np.sqrt(r_hat) + eps), state
     raise ValueError(f"unknown method {method}")
 
+
 def optimise(grad, theta0, method, gamma, num_iters=1000, tol=1e-8, **kw):
     """Full-gradient loop; returns all iterates and the number of steps taken."""
     theta, state = np.array(theta0, dtype=float), {}
@@ -154,6 +167,7 @@ def optimise(grad, theta0, method, gamma, num_iters=1000, tol=1e-8, **kw):
         if np.linalg.norm(g) < tol:
             break
     return np.array(history), t
+
 
 def gradient_descent(X, y, gamma, lam=0.0, num_iters=1000, tol=1e-8):
     """Plain gradient descent and returns theta, iterations and |theta - theta_closed_form|"""
@@ -169,6 +183,7 @@ def gradient_descent(X, y, gamma, lam=0.0, num_iters=1000, tol=1e-8):
         if np.linalg.norm(g) < tol:
             break
     return np.array(history), t + 1, err
+
 
 def k_fold_degrees(x, y, k, model, maxdegree=26):
     cv_mse = np.zeros(maxdegree)
