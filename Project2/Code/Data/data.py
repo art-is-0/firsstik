@@ -18,7 +18,11 @@ def train_val_split(X, y, val_size=0.1, seed=67, stratify=True):
 
 
 def one_hot(y, n_classes=10):
-    return np.eye(n_classes)[y]
+    '''Integer labels -> one-hot rows'''
+    n_classes = int(np.max(y)) + 1 if n_classes is None else n_classes
+    Y = np.zeros((len(y), n_classes))
+    Y[np.arange(len(y)), y] = 1.0
+    return Y
 
 
 def to_column(x):

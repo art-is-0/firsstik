@@ -196,3 +196,31 @@ def k_fold_degrees(x, y, k, model, maxdegree=26):
         cv_mse[deg - 1] = scores.mean()
 
     return cv_mse
+
+
+# --------- Helper functions ---------------------------------------------------
+
+def cached_arrays(path, compute, rerun=False):
+    '''Load a dict of arrays from .npz, or compute and save them if missing'''
+    if rerun or not path.exists():
+        arrays = compute()
+        np.savez(path, **arrays)
+        return arrays
+    with np.load(path) as saved:
+        return {key: saved[key] for key in saved.files}
+
+
+def best_cell(values, **axes):
+    '''Where `values` is smallest. Axes are given in order of the array's dimensions'''
+    masked = np.where(np.isfinite(values), values, np.inf)
+    index = np.unravel_index(np.argmin(masked), values.shape)
+    best = {"value": values[index], "index": index}
+    for dim, (name, axis_values) in zip(index, axes.items()):
+        best[name] = axis_values[dim]
+    return best
+
+
+def poly_model(degree, model):
+    '''Polynomial features -> scaling -> `model`'''
+    return make_pipeline(PolynomialFeatures(degree=degree, include_bias=False),
+                         StandardScaler(), model)

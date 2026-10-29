@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # # Plot settings
-sns.color_palette('bright')
-sns.set_theme()
+# sns.color_palette('bright')
+# sns.set_theme()
 # # sns.set_style('darkgrid')
 # sns.set_theme(style="whitegrid")
 # style and parameters used for plotting

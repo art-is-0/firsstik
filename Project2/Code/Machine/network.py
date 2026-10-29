@@ -10,8 +10,10 @@ def create_layers(sizes, activations, seed):
     rng = np.random.default_rng(seed)
     layers = []
     for n_in, n_out, name in zip(sizes[:-1], sizes[1:], activations):
-        std = np.sqrt(2.0 / n_in) if name in ("relu", "leaky_relu") else np.sqrt(1.0 / n_in)
-        layers.append((rng.normal(0.0, std, (n_in, n_out)), np.zeros(n_out)))
+        scale = np.sqrt(2.0 / n_in) if name in ("relu", "leaky_relu") else np.sqrt(1.0 / n_in)
+        W = rng.normal(0.0, scale, (n_in, n_out))
+        b = np.zeros(n_out) + 0.01
+        layers.append((W, b))
     return layers
 
 class NeuralNetwork:
@@ -35,11 +37,14 @@ class NeuralNetwork:
 
     
     def cost(self, inputs, targets):
-        '''data term + penalties'''
+        p = self.predict(inputs)
+        return self.cost_fun(p, targets)
+    
+    
+    def penalty(self):
         l1 = l1_penalty(self.layers, self.lmbd1)
         l2 = l2_penalty(self.layers, self.lmbd2)
-        p = self.predict(inputs)
-        return self.cost_fun(p, targets) + l2 + l1
+        return l1 + l2
     
     
     def _feed_forward_saver(self, inputs):

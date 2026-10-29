@@ -22,7 +22,7 @@ def binary_cross_entropy_der(predict, target):
 def cross_entropy(predict, target):
     '''Softmax cross entropy, target one-hot (n, K)'''
     p = np.clip(predict, EPS, 1.0)
-    return -np.mean(np.sum(-target * np.log(p), axis=1))
+    return np.mean(np.sum(-target * np.log(p), axis=1))
 
 
 def cross_entropy_der(predict, target):
