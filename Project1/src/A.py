@@ -41,8 +41,8 @@ plt.savefig(os.path.join(FIGURES_PATH, 'A-MSE_train_test_split.pdf'))
 print(f"Lowest MSE score of {MSE_scores[min_test_d, 1]:.2e} is for degree {min_test_d}")
 
 
-err = (r2_scores[:, 1] - r2_scores[:, 0])
-print(err)
+# err = (r2_scores[:, 1] - r2_scores[:, 0])
+# print(err)
 
 plt.figure(figsize=(10, 6))
 plt.plot(range(1, d+1), r2_scores[:, 0], label="Train")
