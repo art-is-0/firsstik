@@ -210,10 +210,11 @@ def cached_arrays(path, compute, rerun=False):
         return {key: saved[key] for key in saved.files}
 
 
-def best_cell(values, **axes):
-    '''Where `values` is smallest. Axes are given in order of the array's dimensions'''
-    masked = np.where(np.isfinite(values), values, np.inf)
-    index = np.unravel_index(np.argmin(masked), values.shape)
+def best_cell(values, smallest=True, **axes):
+    '''Where `values` is smallest (or largest). Axes are given in order of the array's dimensions'''
+    worst = np.inf if smallest else -np.inf
+    masked = np.where(np.isfinite(values), values, worst)
+    index = np.unravel_index(np.argmin(masked) if smallest else np.argmax(masked), values.shape)
     best = {"value": values[index], "index": index}
     for dim, (name, axis_values) in zip(index, axes.items()):
         best[name] = axis_values[dim]

@@ -46,23 +46,25 @@ def update_layers(layers, layer_grads, method, gamma, states, t, **kw):
 
 
 def train(net, X, Y, method="adam", gamma=1e-3, epochs=100, batch_size=None,
-          X_val=None, Y_val=None, seed=67, **kw):
+          X_val=None, Y_val=None, metric=None, seed=67, **kw):
     rng = np.random.default_rng(seed)
     n = X.shape[0]
     M = n if batch_size is None else batch_size
     states = init_state(net.layers)
     t = 0
-    history = {"train_cost": [], "train_total": [], "val_cost": []}
+    history = {"train_cost": [], "val_cost": [], "train_metric": [], "val_metric": []}
     for epoch in range(epochs):
         for batch in make_batches(n, M, rng):
             t += 1
             grads = net.compute_gradient(X[batch], Y[batch])
             new_layers, states = update_layers(net.layers, grads, method, gamma, states, t, **kw)
             net.update_weights(new_layers)
-        # Save costs
-        c = net.cost(X, Y)
-        history["train_cost"].append(c)
-        history["train_total"].append(c + net.penalty())
+        # Save costs and metrics
+        history["train_cost"].append(net.cost(X, Y))
+        if metric is not None:
+            history["train_metric"].append(metric(net, X, Y))
         if X_val is not None:
             history["val_cost"].append(net.cost(X_val, Y_val))
+            if metric is not None:
+                history["val_metric"].append(metric(net, X_val, Y_val))
     return history
