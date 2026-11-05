@@ -30,8 +30,8 @@ def noise_floor(ax, sigma=0.1, label=True):
 
 def band(ax, a, mean, se, label=None, **kw):
     '''Mean curve with a ±1 SE band'''
-    line, = ax.plot(x, mean, label=label, **kw)
-    ax.fill_between(x, mean - se, mean + se, color=line.get_color(), alpha=0.2, lw=0)
+    line, = ax.plot(a, mean, label=label, **kw)
+    ax.fill_between(a, mean - se, mean + se, color=line.get_color(), alpha=0.1, lw=0)
     return line
 
 
@@ -41,6 +41,6 @@ def heatmap_marks(ax, within, best=None):
     mean, se have shapes (rows, cols, as drawn with imshow/pcolormesh)
     '''
     for r, c in zip(*np.where(within)):
-        ax.add_patch(plt.Rectangle((c, r), 1, 1, fill=False, ec="white", ls=":", lw=0.8))
+        ax.add_patch(plt.Rectangle((c, r), 1, 1, fill=False, ec="0.35", ls=":", lw=0.9))
     if best is not None:
-        ad.add_patch(plt.Rectangle((best[1], best[0]), 1, 1, fill=False, ec="cyan", lw=1.5))
+        ax.add_patch(plt.Rectangle((best[1], best[0]), 1, 1, fill=False, ec="cyan", lw=1.5))

@@ -33,3 +33,14 @@ def se(scores):
 def binomial_se(p, n):
     '''Standard error of an accuracy p measured on n independent samples'''
     return np.sqrt(p * (1 - p) / n)
+
+
+def paired_diff(err2_a, err2_b):
+    '''
+    Mean differences of two models' squared error on the same points, and its
+    standard error.
+    Negative: model a is better. The SE only covers which points ended up
+    in the test set.
+    '''
+    d = np.asarray(err2_a) - np.asarray(err2_b)
+    return d.mean(), d.std(ddof=1) / np.sqrt(len(d))
