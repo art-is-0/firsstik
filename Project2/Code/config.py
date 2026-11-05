@@ -1,6 +1,7 @@
 from pathlib import Path
 
 SEED = 67
+K_FOLDS = 5
 
 ROOT = Path(__file__).resolve().parent.parent   # Repo root
 FIGURES_PATH = ROOT / "Figures"

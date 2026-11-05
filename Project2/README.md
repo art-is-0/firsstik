@@ -32,6 +32,9 @@ as PDFs with names mirroring the tasks they're a part of.
 
 ---
 
-Here, Artis Birze shall write a description on how to install the required packages
-to run the code, which would include the `requirements.txt` file I've initiated
-but not touched.
+Installing all the required packages by running the command
+```
+pip3 install -r requirements.txt
+```
+from the project folder.
+

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from cycler import cycler
 
-COL = 259.48927 / 72.72     # our latex template column width in inches
+COL = 259.48927 / 72.27     # our latex template column width in inches
 pad = 4 / 72
 
 plt.rcParams.update({

@@ -56,16 +56,18 @@ MATCHED_OUTPUT_ERROR = {
 # ---- L1 / L2 ON WEIGHTS ONLY (not the biases) --------------------------------
 
 
-def l2_penalty(layers, lmbd2):
-    return lmbd2 * sum(np.sum(W ** 2) for W, _ in layers)
+def l2_penalty(layers, lmbd2, biases=False):
+    tot = sum(np.sum(W ** 2) + (np.sum(b ** 2) if biases else 0.0) for W, b in layers)
+    return lmbd2 * tot
 
 
 def l2_penalty_der(W, lmbd2):
     return 2.0 * lmbd2 * W
 
 
-def l1_penalty(layers, lmbd1):
-    return lmbd1 * sum(np.sum(np.abs(W)) for W, _ in layers)
+def l1_penalty(layers, lmbd1, biases=False):
+    tot = sum(np.sum(np.abs(W)) + (np.sum(np.abs(b)) if biases else 0.0) for W, b in layers)
+    return lmbd1 * tot
 
 
 def l1_penalty_der(W, lmbd1):

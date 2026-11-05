@@ -21,3 +21,15 @@ def precision_recall_f1(C):
     recall = tp / np.maximum(C.sum(axis=1), 1)
     f1 = 2 * precision * recall / np.maximum(precision + recall, 1e-12)
     return precision, recall, f1, f1.mean()     # macro F1
+
+
+def se(scores):
+    '''Standard error of the mean of the fold scores, s / sqrt(k) with the sample standard deviation s'''
+    scores = np.asarray(scores, dtype=float)
+    scores = scores[np.isfinite(scores)]
+    return np.std(scores, ddof=1) / np.sqrt(len(scores))
+
+
+def binomial_se(p, n):
+    '''Standard error of an accuracy p measured on n independent samples'''
+    return np.sqrt(p * (1 - p) / n)

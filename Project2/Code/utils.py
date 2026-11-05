@@ -185,8 +185,9 @@ def gradient_descent(X, y, gamma, lam=0.0, num_iters=1000, tol=1e-8):
     return np.array(history), t + 1, err
 
 
-def k_fold_degrees(x, y, k, model, maxdegree=26):
+def k_fold_degrees(x, y, k, model, maxdegree=26, return_se=False):
     cv_mse = np.zeros(maxdegree)
+    cv_se = np.zeros(maxdegree)
     kfold = KFold(n_splits=k, shuffle=True, random_state=67)
     for deg in range(1, maxdegree + 1):
         pipe = make_pipeline(PolynomialFeatures(degree=deg, include_bias=False), StandardScaler(),
@@ -194,14 +195,22 @@ def k_fold_degrees(x, y, k, model, maxdegree=26):
         scores = -cross_val_score(pipe, x, y, cv=kfold,
                                 scoring="neg_mean_squared_error")
         cv_mse[deg - 1] = scores.mean()
-
-    return cv_mse
+        cv_se[deg - 1] = scores.std(ddof=1) / np.sqrt(k)
+    return (cv_mse, cv_se) if return_se else cv_mse
 
 
 # --------- Helper functions ---------------------------------------------------
 
 def cached_arrays(path, compute, rerun=False):
-    '''Load a dict of arrays from .npz, or compute and save them if missing'''
+    '''
+    Load a dict of arrays from .npz, or compute and save them if missing
+    
+    LLM-assisted
+    ------------
+    Tool: Claude Sonnet (October 2026)
+    Role: Suggested function for running and storing results in a more
+          concise way.
+    '''
     if rerun or not path.exists():
         arrays = compute()
         np.savez(path, **arrays)

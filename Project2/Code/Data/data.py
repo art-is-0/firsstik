@@ -1,6 +1,5 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
-from utils import create_feature_matrix
 
 def load_mnist(path):
     with np.load(path) as data:

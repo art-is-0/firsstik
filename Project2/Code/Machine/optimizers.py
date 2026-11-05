@@ -45,14 +45,27 @@ def update_layers(layers, layer_grads, method, gamma, states, t, **kw):
     return new_layers, states
 
 
-def train(net, X, Y, method="adam", gamma=1e-3, epochs=100, batch_size=None,
-          X_val=None, Y_val=None, metric=None, seed=67, **kw):
+def train(net, X, Y, method="adam", gamma=1e-3, epochs=100, 
+          batch_size=None, X_val=None, Y_val=None, metric=None, seed=67, 
+          patience=None, verbose=False, **kw):
+    '''
+    Returns the history with the training cost and metric (i.e., accuracy) after 
+    every epoch and, when a validation set is given, the validation cost and 
+    accuracy.
+    
+    LLM-assisted
+    ------------
+    Tool: Claude Sonnet (November 2026)
+    Role: Suggested adding an optional "patience" so the train function can
+          stop early if the validation cost hasn't improved for this many epochs.
+    '''
     rng = np.random.default_rng(seed)
     n = X.shape[0]
     M = n if batch_size is None else batch_size
     states = init_state(net.layers)
     t = 0
     history = {"train_cost": [], "val_cost": [], "train_metric": [], "val_metric": []}
+    best_val, best_layers, since_best = np.inf, None, 0     # LLM-assisted: set up for "patience"
     for epoch in range(epochs):
         for batch in make_batches(n, M, rng):
             t += 1
@@ -61,10 +74,29 @@ def train(net, X, Y, method="adam", gamma=1e-3, epochs=100, batch_size=None,
             net.update_weights(new_layers)
         # Save costs and metrics
         history["train_cost"].append(net.cost(X, Y))
+        if not np.isfinite(history["train_cost"][-1]):  # Diverged: stop instead of burning epochs
+            history["diverged"] = True
+            break
         if metric is not None:
             history["train_metric"].append(metric(net, X, Y))
         if X_val is not None:
             history["val_cost"].append(net.cost(X_val, Y_val))
             if metric is not None:
                 history["val_metric"].append(metric(net, X_val, Y_val))
+            if patience is not None:        # Early stopping, keeps the best weights
+                if history["val_cost"][-1] < best_val:
+                    best_val, since_best = history["val_cost"][-1], 0
+                    best_layers = [(W.copy(), b.copy()) for W, b in net.layers]
+                else:
+                    since_best += 1
+                    if since_best >= patience:
+                        break
+        if verbose:
+            msg = f"epoch {epoch + 1:.3d}: cost {history['train_cost'][-1]:.4f}"
+            if X_val is not None:
+                msg += f"  validation accuracy {history['val_metric'][-1]:.4f}"
+            print(msg)
+    if best_layers is not None:
+        net.update_weights(best_layers)
+    history["epochs_run"] = len(history["train_cost"])
     return history
