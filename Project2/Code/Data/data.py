@@ -1,0 +1,28 @@
+import numpy as np
+from sklearn.model_selection import train_test_split
+
+def load_mnist(path):
+    with np.load(path) as data:
+        x_train, y_train = data["x_train"], data["y_train"]
+        x_test, y_test = data["x_test"], data["y_test"]
+    x_train = x_train.reshape(len(x_train), -1) / 255.0
+    x_test = x_test.reshape(len(x_test), -1) / 255.0
+    return x_train, y_train, x_test, y_test
+
+
+def train_val_split(X, y, val_size=0.1, seed=67, stratify=True):
+    '''Returns X_train, X_val, y_train, y_val (sklearn's order)'''
+    return train_test_split(X, y, test_size=val_size, random_state=seed, 
+                            stratify=y if stratify else None)
+
+
+def one_hot(y, n_classes=10):
+    '''Integer labels -> one-hot rows'''
+    n_classes = int(np.max(y)) + 1 if n_classes is None else n_classes
+    Y = np.zeros((len(y), n_classes))
+    Y[np.arange(len(y)), y] = 1.0
+    return Y
+
+
+def to_column(x):
+    return np.asarray(x).reshape(-1, 1)
