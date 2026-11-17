@@ -16,7 +16,7 @@ def step_length(t, t0, t1):
     """The schedule of Eq. (4.40)."""
     return t0 / (t + t1)
 
-def sgd(X, y, method="plain", n_epochs=50, batch_size=5, gamma=0.1, schedule=None, lam=0.0, seed=2026, **kw):
+def sgd(X, y, method="plain", n_epochs=50, batch_size=5, gamma=0.1, schedule=None, lam=0.0, seed=67, **kw):
     """Minibatch SGD, Eq. (4.34), with any optimiser. schedule=(t0, t1) replaces gamma by Eq. (4.40).
     Returns the iterate after every epoch."""
     rng = np.random.default_rng(seed)
