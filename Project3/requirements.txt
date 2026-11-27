@@ -1,0 +1,14 @@
+# Python packages for FYS-STK4155 Project 3 (tested with Python 3.12).
+# Install with:  pip install -r requirements.txt
+# Versions are the ones the code was tested with; newer versions will probably work too.
+
+numpy>=2.5.4
+scipy>=1.18.1
+matplotlib>=3.11.2
+uproot>=5.7.8        # reads .root files without a ROOT installation (extract_backgrounds.py)
+
+# Running spectrum_generator.ipynb
+ipykernel>=7.4.0
+
+# Not needed: ROOT/PyROOT. It is only used by the optional
+# `extract_backgrounds.py --compare-root` check against TSpectrum::Background.
